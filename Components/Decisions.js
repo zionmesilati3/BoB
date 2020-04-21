@@ -3,7 +3,7 @@ import { View, Text,StyleSheet,AsyncStorage,ScrollView,Image,Button,FlatList,Tou
 import { ActionButton,Card,Icon } from 'react-native-material-ui';
 
 export default function Decisions({navigation}){
-
+// single decision page still need alot of work
     const window=useWindowDimensions();
 
     const [pic,setPic]=useState(null)

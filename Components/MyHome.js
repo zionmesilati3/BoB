@@ -5,7 +5,7 @@ import { Icon } from 'react-native-material-ui';
 export default function MyHome({navigation}){
     const [user,setUser]= useState(0);
     /**  **/
-
+// noting much here its just a home page that can navigate to other screens
     const MoveTo=(name)=>{
         navigation.navigate(name);
       }
@@ -30,7 +30,7 @@ export default function MyHome({navigation}){
     return(
         <View style={styles.container}>
         <ScrollView>
-            <Text>each square will be a menu item</Text>
+            
             <View style={styles.container}>
             <View style={styles.spaceH}></View>
 
@@ -38,13 +38,13 @@ export default function MyHome({navigation}){
                     <View style={styles.row1}>
                     <View style={styles.spaceW}></View>
                         <View style={styles.sqr}>
-                            <TouchableOpacity onPress={()=>{console.log('sent!')}}>
+                            <TouchableOpacity onPress={()=>{MoveTo('My Decisions')}}>
                                 <Icon color='#787' size={180} style={{alignSelf:'center',justifyContent:'center',}} name="live-help" />
                             </TouchableOpacity>
                         </View>
                             <View style={styles.spaceW}></View>
                         <View style={styles.sqr1}>
-                            <TouchableOpacity onPress={()=>{console.log('sent!')}}>
+                            <TouchableOpacity onPress={()=>{MoveTo('Create Group')}}>
                                 <Icon color='#787' size={180} style={{alignSelf:'center',justifyContent:'center',}} name="group" />
                             </TouchableOpacity>
                         </View>
@@ -58,7 +58,7 @@ export default function MyHome({navigation}){
                     <View style={styles.row1}>
                     <View style={styles.spaceW}></View>
                         <View style={styles.sqr1}>
-                            <TouchableOpacity onPress={()=>{console.log('sent!')}}>
+                            <TouchableOpacity onPress={()=>{MoveTo('My Decisions')}}>
                                 <Icon color='#787' size={180} style={{alignSelf:'center',justifyContent:'center',}} name="rate-review" />
                             </TouchableOpacity>
                         </View>

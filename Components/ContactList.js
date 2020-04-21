@@ -9,25 +9,25 @@ export default function ContactList(props,{navigation}){
     const[contacts,setContacts]=useState([])
 
     let conL=[];
-
-    useEffect(() => {
+// init function is used to get the contact list from the user 
+      useEffect(() => {
         (async () => {
           const { status } = await Contacts.requestPermissionsAsync();
           if (status === 'granted') {
             const { data } = await Contacts.getContactsAsync({
               fields: [Contacts.Fields.PhoneNumbers,Contacts.Fields.Emails],
             });
+    
             if (data.length > 0) {
-              let con;
+              let con
               data.map((c)=>{
                 con={
-                  ...c,
-                  checked:false,
+                  ...c,checked:false,
                   inGroupCheck:false,
                 }
                 conL.push(con);
               })
-              setContacts(conL);
+              setContacts(conL)
             }
           }
         })();

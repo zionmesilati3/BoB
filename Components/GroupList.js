@@ -1,7 +1,6 @@
 import React,{useState, useEffect} from 'react';
 import { View, Text,StyleSheet,AsyncStorage,ScrollView,Button,TouchableOpacity } from 'react-native';
 import { ActionButton,Card,Icon} from 'react-native-material-ui';
-import { CheckBox } from 'react-native-elements';
 
 export default function GroupList({navigation}){
 
@@ -11,9 +10,10 @@ export default function GroupList({navigation}){
     useEffect(()=>{
         const reScreen = navigation.addListener('focus',()=>{
           getData();
+          console.log("event listener")
         });
         return reScreen;
-      });
+      },[]);
 
       useEffect(()=>{
           console.log("first effect")
@@ -25,6 +25,7 @@ export default function GroupList({navigation}){
                 let value=await AsyncStorage.getItem('groupList');
                 if(value!==null){
                     setGlist(JSON.parse(value));
+                    console.log(value)
                 }
             }
             catch(error){

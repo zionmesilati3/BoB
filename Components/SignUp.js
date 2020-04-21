@@ -7,25 +7,45 @@ import moment from 'moment';
 
 export default function SignUp({navigation}){
 
-    const [user,setUser]=useState('')
+    const [first,setFirst]=useState('')
+    const [last,setLast]=useState('')
     const [email,setEmail]=useState('')
     const [password,setPassword]=useState('')
-    const [country,setCountry]=useState('')
-    const [birthday,setBirthday]=useState(new Date()-315655555555)
+    const [phone,setPhone]=useState('')
+    const [birthday,setBirthday]=useState(new Date())
     const [show,setShow]=useState(false)    
 
 
+// this is a function for the date only 
+// its main useage is when to show the date and also save the date
 
     const onChange=(event,selectedDate)=>{
         const currentDate=selectedDate||birthday;
         setShow(false);
         setBirthday(currentDate);
     }
-
+// takes all the data the user wrote in the fields and send it to the server 
     const sendLogin=()=>{
-        fetch('https://reactnative.dev/movies.json')
+        let u={
+            "Email":email,
+            "Password":password,
+            "First_name":first,
+            "Last_name":last,
+            "DateTime":birthday,
+            "Phone":phone,
+        }
+
+        fetch('https://proj.ruppin.ac.il/igroup21/proj/api/User/',{
+            method:'POST',
+            headers:{
+                Accept:'application/json','Content-Type':'application/json',
+            },
+            body:JSON.stringify(u)
+        })
         .then((response)=>response.json())
-        .then((json)=>{console.log(json),console.log('json up here\n')})
+        .then((json)=>
+            console.log("user signed up succses")
+        )
         .catch((error)=>console.log(error))
         .finally(()=>console.log('finished everything'))
     }
@@ -38,11 +58,6 @@ export default function SignUp({navigation}){
                         <View style={styles.space}></View>
                         <View style={styles.space}></View>
 
-                            <Text style={styles.title1}>User Name</Text>
-                            <TextInput style={styles.input} onChangeText={text=>setUser(text)} value={user} placeholder=" User name" />
-
-                            <View style={styles.space}></View>
-
                             <Text style={styles.title1}>Email</Text>
                             <TextInput style={styles.input} onChangeText={text=>setEmail(text)} value={email} placeholder=" Email" />
 
@@ -53,8 +68,18 @@ export default function SignUp({navigation}){
 
                             <View style={styles.space}></View>
 
-                            <Text style={styles.title1}>Country</Text>
-                            <TextInput style={styles.input} onChangeText={text=>setCountry(text)} value={country} placeholder=" Country" />
+                            <Text style={styles.title1}>First name</Text>
+                            <TextInput style={styles.input} onChangeText={text=>setFirst(text)} value={first} placeholder=" first name" />
+
+                            <View style={styles.space}></View>
+
+                            <Text style={styles.title1}>Last name</Text>
+                            <TextInput style={styles.input} onChangeText={text=>setLast(text)} value={last} placeholder=" last name" />
+
+                            <View style={styles.space}></View>
+
+                            <Text style={styles.title1}>Phone number</Text>
+                            <TextInput style={styles.input} onChangeText={text=>setPhone(text)} value={phone} placeholder=" phone number" />
 
                             <View style={styles.space}></View>
 
@@ -79,7 +104,9 @@ export default function SignUp({navigation}){
                                 />)}
 <View style={styles.space}></View>
 <View style={styles.space}></View>
-<Button title='Register' onPress={()=>console.log('register account')} />
+<Button title='Register' onPress={()=>sendLogin()} />
+<View style={styles.space}></View>
+<Button title='Go back' onPress={()=>navigation.navigate('Login')} />
                 </View>
             </View>
             </ScrollView>

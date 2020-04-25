@@ -80,6 +80,7 @@ export default function MakeDecision({navigation}){
 //-------------------------------- step 3 --------------------------------//
 // send the decision to server and post it
       const MakeDecision=async()=>{
+          console.log(user.Email,groupID,description,pic1,pic2)
           if(user.Email&&groupID&&description&&pic1&&pic2){
           let Indecision={
             "Group_groupID": groupID,
@@ -92,7 +93,7 @@ export default function MakeDecision({navigation}){
             "closeIndecision":0,
     };
     console.log(Indecision);
-        await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Indecision',{
+        await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Indecision/',{
             method:'POST',
             headers:{
                 Accept:'application/json','Content-Type':'application/json',
@@ -101,7 +102,7 @@ export default function MakeDecision({navigation}){
         })
         .then((response)=>getDecisionID())
         .catch((error)=>console.log("error"))
-
+        
       }
       else{alert("some data is missing please fill all the information")}
     }

@@ -9,7 +9,6 @@ export default function CreateGroup({navigation}){
     const[groups,setGroups]=useState([])
     const[fl,setFl]=useState([])
     const[user,setUser]=useState(null)
-    const[phones,setPhones]=useState(null)
 
     var fList=[];
 
@@ -110,7 +109,7 @@ const sendData=async()=>{
     let pn;
     let phoneNumbersString = "'050555555111','050555555101','0522695041'";
 
-    if(fl!==[]){//this function pass over all the contacts and add them to the string 
+   /* if(fl!==[]){//this function pass over all the contacts and add them to the string 
         phoneNumbersString="";
         fl.map((c)=>{
             pn=c.phoneNumbers[0].number;
@@ -121,10 +120,10 @@ const sendData=async()=>{
         });
         phoneNumbersString=phoneNumbersString.slice(0,-1);
         
-    }
+    }*/
 // here we send the string of phone numbers we made to the data base 
 // importent thing to note is that as of now we need the phone numbers to exist in the data base so we still use "static numbers that we have in the DB".
-
+console.log(phoneNumbersString);
     fetch('https://proj.ruppin.ac.il/igroup21/proj/api/User/phoneNumbersString/'+phoneNumbersString+"/",{
             method:'GET',
             headers:{
@@ -141,7 +140,7 @@ const sendData=async()=>{
 // check if the group name is already used by the user and take care of it
 
 const groupCheck=async(data)=>{
-    setPhones(data);
+    let phones=data;
     console.log(data);
 
     fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Group/GroupNameStringGroup/' + user.Email + "/" + gname+"/true/",{
@@ -152,13 +151,14 @@ const groupCheck=async(data)=>{
         })
         .then((response)=>response.json())
         .then((res)=>{
+            console.log(res);
             if(res>0){
                 alert("group name already exist in DB");
                 console.log("group name already in use");
             }
             else if(res===0){
                 alert("group doesnt exist in DB you can use it");
-                groupIN(res);
+                groupIN(res,phones);
             }
             else{alert("error of some kind");}
         })
@@ -169,13 +169,13 @@ const groupCheck=async(data)=>{
 // **** 3 **** //
 // insert group into DB with the user
 
-const groupIN=async(data)=>{
+const groupIN=async(data,phones)=>{
     let gr={
         "User_manager": user.Email,
         "Group_name": gname
     }
 
-    fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Group',{
+    await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Group',{
         method:'POST',
         headers:{
             Accept:'application/json','Content-Type':'application/json',
@@ -183,7 +183,7 @@ const groupIN=async(data)=>{
         body:JSON.stringify(gr)
     })
     .then((response)=>{
-        GroupID();
+        GroupID(phones);
     })
     .catch((error)=>console.log(error))
     .finally(()=>console.log('group added'))
@@ -192,15 +192,15 @@ const groupIN=async(data)=>{
 // **** 4 **** //
 // get group ID
 
-const GroupID=async()=>{
-    fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Group/GroupNameStringGroup/' + user.Email + "/" + gname+"/true/",{
+const GroupID=async(phones)=>{
+    await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Group/GroupNameStringGroup/' + user.Email + "/" + gname+"/true/",{
             method:'GET',
             headers:{
                 Accept:'application/json','Content-Type':'application/json',
             },
         })
         .then((response)=>response.json())
-        .then((res)=>UsersAdder(res))
+        .then((res)=>UsersAdder(res,phones))
         .catch((error)=>console.log(error))
         .finally(()=>console.log('got group ID'))
 }
@@ -208,7 +208,8 @@ const GroupID=async()=>{
 // **** 5 **** //
 // add users to group
 
-const UsersAdder=async(groupID)=>{
+const UsersAdder=async(groupID,phones)=>{
+    console.log(phones)
     if(phones!==null){
         phones.map((friend)=>{
             let UserInGroup={
@@ -223,7 +224,7 @@ const UsersAdder=async(groupID)=>{
                 },
                 body:JSON.stringify(UserInGroup)
             })
-            .then((response)=>console.log("added friends to group"))
+            .then((response)=>console.log("added friend to group"))
             .catch((error)=>console.log(error))
         });
 

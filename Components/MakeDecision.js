@@ -8,28 +8,8 @@ import Constants from 'expo-constants';
 
 
 export default function MakeDecision({navigation}){
-    const [friends,setFriends]=useState([
-        {key: 'Devin',checked:false,group:'Friends'},
-        {key: 'Dan',checked:true,group:'Family'},
-        {key: 'Dominic',checked:false,group:'Family'},
-        {key: 'Jackson',checked:false,group:'Friends'},
-        {key: 'James',checked:false,group:'Work'},
-        {key: 'Joel',checked:false,group:'Work'},
-        {key: 'John',checked:false,group:'Close Friends'},
-        {key: 'Jillian',checked:false,group:'Study Group'},
-        {key: 'Jimmy',checked:false,group:'Close Family'},
-        {key: 'Mom',checked:false,group:'Close Family'},
-        {key: 'Dad',checked:false,group:'Close Family'},
-        {key: 'Julie',checked:false,group:'Study Group'},
-    ]);
-    const [groups,setGroups]=useState([
-        {Group_name: 'Friends',checked:false},
-        {Group_name: 'Family',checked:true},
-        {Group_name: 'Work',checked:false},
-        {Group_name: 'Close Friends',checked:true},
-        {Group_name: 'Close Family',checked:false},
-        {Group_name: 'Study Group',checked:false},
-    ]);
+    const [friends,setFriends]=useState(null);
+    const [groups,setGroups]=useState(null);
     const [groupID,setGroupID]=useState(null);
     const [description,setDescription]=useState('');
     const [pic1,setPic1]=useState(null);

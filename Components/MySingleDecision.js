@@ -12,7 +12,7 @@ export default function Decisions({navigation}){
 
     return(
         <View style={styles.container}>
-            <Text style={styles.title}>Help with User Decision on Clothes</Text>
+            <Text style={styles.title}>this is my decision not my friends</Text>
 
             <View style={styles.container}>
 

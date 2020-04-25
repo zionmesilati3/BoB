@@ -5,10 +5,11 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import HomeStack from './Components/HomeStack.js';
 import MakeDecision from './Components/MakeDecision.js';
 import Header from './Components/Header.js';
-import Decisions from './Components/Decisions.js';
+import SingleDecision from './Components/SingleDecision.js';
 import CreateGroup from './Components/CreateGroup.js';
 import GroupList from './Components/GroupList.js';
 import MyDecisions from './Components/MyDecisions.js';
+import FDecisionsStack from './Components/FDecisionsStack.js';
 import 'react-native-gesture-handler';
 
 
@@ -49,16 +50,14 @@ const [user,setUser]=useState('');
   return (
 <NavigationContainer style={{backgroundColor:'#5af'}}>
   <Header user={user}/>
-
       <Drawer.Navigator initialRouteName="Home">
         <Drawer.Screen name="Home" component={HomeStack} />
+        <Drawer.Screen name="Friends Decisions" component={FDecisionsStack} />
         <Drawer.Screen name="My Decisions" component={MyDecisions} />
         <Drawer.Screen name="Make Decision" component={MakeDecision} />
         <Drawer.Screen name="GroupList" component={GroupList} />
-        <Drawer.Screen name="Single Decision" component={Decisions} />
         <Drawer.Screen name="Create Group" component={CreateGroup} />
       </Drawer.Navigator>
-
 </NavigationContainer>
 
 );

@@ -4,8 +4,8 @@ import { ActionButton,Card } from 'react-native-material-ui';
 import { CheckBox } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-export default function MyDecisions({navigation}){
-    const[decisions,setDecisions]=useState(null)
+export default function FriendsDecisions({navigation}){
+    const[friendsDec,setFriendsDec]=useState(null)
     const[user,setUser]=useState(null);
 //-------------------------------- step 1 --------------------------------//
 // this is the init function in react 
@@ -13,13 +13,14 @@ export default function MyDecisions({navigation}){
 // 2. the decisions of the user we get from DB
 
 // 3. build of current decisions CARD is still in process
+var list=[];
 
     useEffect(() => {
         (async () => {
             try{
                 let value=await AsyncStorage.getItem('User');
                 if(value!==null){
-                    fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Indecision/getIndecisionByUserEmail/' +JSON.parse(value).Email+'/' ,{
+                    fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Indecision/getFriendIndecisionByUserPart/' +JSON.parse(value).Email+'/0/' ,{
                         method:'GET',
                         headers:{
                             Accept:'application/json','Content-Type':'application/json',
@@ -28,7 +29,14 @@ export default function MyDecisions({navigation}){
                     .then((response)=>response.json())
                     .then((res)=>{
                         console.log(res)
-                        setDecisions(res)
+                        if(res){
+                            res.map((dec)=>{
+                                if(dec.Percent_option1===0 && dec.Percent_option2===0){
+                                    list.push(dec);
+                                }
+                            })
+                        }
+                        setFriendsDec(list)
                 })
                     .catch((error)=>console.log(error))
 
@@ -43,28 +51,27 @@ export default function MyDecisions({navigation}){
       }, []);
 
 
+      function nav(dec){
+        navigation.navigate('Single Decision',{Decision:dec,User:user})
+      }
 
 
     return(
         <View style={styles.container}>
-            <Text style={styles.title}>My Decisions</Text>
+            <Text style={styles.title}>Friends Decisions</Text>
             <View style={styles.spaceH}></View>
             <ScrollView>
             <View style={styles.container}>
-                        {decisions&&decisions.map((item)=><View style={styles.sqr} key={item.IndecisionID}><View style={styles.spaceH}></View>
-                            <TouchableOpacity>
-                            <Text style={styles.title1} onPress={()=>console.log(item.IndecisionID)}> {item.Description_}</Text></TouchableOpacity>
+                        {friendsDec&&friendsDec.map((item)=><View style={styles.sqr} key={item.IndecisionID}><View style={styles.spaceH}></View>
+                            <Text style={styles.title1}> {item.Description_}</Text>
                             <View style={styles.spaceH}></View>
                             <View style={styles.row}>
-                                <Button style={styles.btnL} onPress={()=>console.log("Move to View decision",item.IndecisionID)} title="View Decision" />
-                                <View style={styles.spaceW}></View>
-                                <Button style={styles.btnR} onPress={()=>console.log("Stop Decision",item.IndecisionID)} title="Stop Decision" />
+                                <Button style={styles.btnL} onPress={()=>nav(item)} title='Help your Friend Decision'></Button>
                             </View>
                             <View style={styles.spaceH}></View>
                         </View>)}
             </View>
             </ScrollView>
-                <Button onPress={()=>navigation.navigate('Make Decision')} title="Make Decision" />
         </View>
     )
 }

@@ -107,8 +107,25 @@ const changePhoneNumbers=()=>{
 // send the phone numbers of picked friends to DB to add to the new group
 
 const sendData=async()=>{
+    let pn;
     let phoneNumbersString = "'050555555111','050555555101','0522695041'";
-    fetch('https://proj.ruppin.ac.il/igroup21/proj/api/User/phoneNumbersString/'+phoneNumbersString,{
+
+    if(fl!==[]){//this function pass over all the contacts and add them to the string 
+        phoneNumbersString="";
+        fl.map((c)=>{
+            pn=c.phoneNumbers[0].number;
+            pn=pn.replace("+972 ",'0');
+            pn=pn.replace("-",'');
+            pn=pn.replace("-",'');
+            phoneNumbersString+="'"+pn+"',";
+        });
+        phoneNumbersString=phoneNumbersString.slice(0,-1);
+        
+    }
+// here we send the string of phone numbers we made to the data base 
+// importent thing to note is that as of now we need the phone numbers to exist in the data base so we still use "static numbers that we have in the DB".
+
+    fetch('https://proj.ruppin.ac.il/igroup21/proj/api/User/phoneNumbersString/'+phoneNumbersString+"/",{
             method:'GET',
             headers:{
                 Accept:'application/json','Content-Type':'application/json',
@@ -127,7 +144,7 @@ const groupCheck=async(data)=>{
     setPhones(data);
     console.log(data);
 
-    fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Group/GroupNameString/' + user.Email + "/" + gname,{
+    fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Group/GroupNameStringGroup/' + user.Email + "/" + gname+"/true/",{
             method:'GET',
             headers:{
                 Accept:'application/json','Content-Type':'application/json',
@@ -176,7 +193,7 @@ const groupIN=async(data)=>{
 // get group ID
 
 const GroupID=async()=>{
-    fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Group/GroupNameString/' + user.Email + "/" + gname,{
+    fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Group/GroupNameStringGroup/' + user.Email + "/" + gname+"/true/",{
             method:'GET',
             headers:{
                 Accept:'application/json','Content-Type':'application/json',

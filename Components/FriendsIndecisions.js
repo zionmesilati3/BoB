@@ -15,8 +15,15 @@ export default function FriendsDecisions({navigation}){
 // 3. build of current decisions CARD is still in process
 var list=[];
 
-    useEffect(() => {
-        (async () => {
+useEffect(()=>{
+    const reScreen = navigation.addListener('focus',()=>{
+      getData();
+      console.log("event listener in FD")
+    });
+    return reScreen;
+  },[]);
+
+async function getData(){
             try{
                 let value=await AsyncStorage.getItem('User');
                 if(value!==null){
@@ -28,8 +35,8 @@ var list=[];
                     })
                     .then((response)=>response.json())
                     .then((res)=>{
-                        console.log(res)
                         if(res){
+                            list=[];
                             res.map((dec)=>{
                                 if(dec.Percent_option1===0 && dec.Percent_option2===0){
                                     list.push(dec);
@@ -47,8 +54,7 @@ var list=[];
             catch(error){
                 console.log(error)
             }
-        })(); 
-      }, []);
+        }
 
 
       function nav(dec){

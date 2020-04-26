@@ -6,7 +6,7 @@ import FriendsIndecisions from './FriendsIndecisions.js';
 
 const Stack = createStackNavigator();
 
-export default function HomeStack({navigation}){
+export default function FDecisionsStack({navigation}){
     // just a basic navigator to make some screen not apper
     // i still need to fix something here to make the login screen not part of the drawer at all
     return (

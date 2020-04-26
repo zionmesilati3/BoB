@@ -21,14 +21,20 @@ export default function MakeDecision({navigation}){
 
 //-------------------------------- step 1 --------------------------------//
 // this is the init function basicly and it 
-    useEffect(() => {
-        (async () => {
+useEffect(()=>{
+    const reScreen = navigation.addListener('focus',()=>{
+      getData();
+      console.log("event listener in make dec")
+    });
+    return reScreen;
+  },[]);
+
+async function getData(){
             try{
                 let value=await AsyncStorage.getItem('User');
                 if(value!==null){
                     setUser(JSON.parse(value));// get the user from local storage
                     console.log("user is set");
-                    console.log(value);
                     getGroups(JSON.parse(value));// get the groups from db by sending the user email
                 }
             }
@@ -41,13 +47,12 @@ export default function MakeDecision({navigation}){
                   alert('Sorry, we need camera roll permissions to make this work!');
                 }
               }
-        })(); 
-      }, []);
+}
+
 
 //-------------------------------- step 2 --------------------------------//
 // get all the groups that the user has
       const getGroups=async(u)=>{
-          console.log(u.Email);
           let g;
         fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Group/' + u.Email+'/',{
             method:'GET',
@@ -65,11 +70,10 @@ export default function MakeDecision({navigation}){
                             ...item,
                             checked:false
                         };
-                        console.log(g);
+                        
                         Glist.push(g);
                     }
                 });
-                console.log(Glist);
                 setGroups(Glist);
             }
         })

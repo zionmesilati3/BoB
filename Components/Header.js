@@ -2,7 +2,7 @@ import React,{useState, useEffect} from 'react';
 import { View, Text,StyleSheet,AsyncStorage,ScrollView } from 'react-native';
 import { ActionButton,Card,Button,Icon } from 'react-native-material-ui';
 
-export default function Header({navigation}){
+export default function Header(){
 
 const [user,setUser]=useState('')
 // just a header still need to learn how to get the user and show it if we want

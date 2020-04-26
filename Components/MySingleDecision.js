@@ -2,24 +2,20 @@ import React,{useState, useEffect} from 'react';
 import { View, Text,StyleSheet,AsyncStorage,ScrollView,Image,Button,FlatList,TouchableOpacity,useWindowDimensions } from 'react-native';
 import { ActionButton,Card,Icon } from 'react-native-material-ui';
 
-export default function Decisions({navigation}){
+export default function Decisions({route,navigation}){
 // single decision page still need alot of work
-    const window=useWindowDimensions();
-
-    const [pic,setPic]=useState(null)
-    const [picture1,setPicture1]=useState('https://my-test-11.slatic.net/p/fa4c59e5a0d08f18571329e03c0e2377.jpg')
-    const [picture2,setPicture2]=useState('https://i5.walmartimages.com/asr/b69a1eb2-8a32-4758-be09-8f1a2e186314_1.a6a746b980d98eda585803edcd7922df.jpeg')
+    
+    const [decision,setDecision]=useState(route.params.Decision)
+    const [picture1,setPicture1]=useState(route.params.Decision.Img1)
+    const [picture2,setPicture2]=useState(route.params.Decision.Img2)
 
     return(
         <View style={styles.container}>
-            <Text style={styles.title}>this is my decision not my friends</Text>
-
+            <Text style={styles.title}> {decision.Description_}</Text>
             <View style={styles.container}>
-
-
                 <View style={styles.colum}>
-                    <View style={styles.row1}>
                     <View style={styles.space}></View>
+                    <Text style={styles.title}>Image 1</Text>
                         <View style={styles.sqr}>
                             <Image
                             style={styles.picture}
@@ -27,6 +23,7 @@ export default function Decisions({navigation}){
                             />
                         </View>
                         <View style={styles.space}></View>
+                        <Text style={styles.title}>Image 2</Text>
                         <View style={styles.sqr}>
                             <Image
                             style={styles.picture}
@@ -34,26 +31,7 @@ export default function Decisions({navigation}){
                             />
                         </View>
                         <View style={styles.space}></View>
-                    </View>
-                    
-                    <View style={styles.row2}>
-    
-                        <Button title=" pick picture 1" onPress={()=>{setPic(picture1)}} />
-                        <View style={styles.space}></View><View style={styles.space}></View><View style={styles.space}></View>
-                        <Button title=" pick picture 2" onPress={()=>{setPic(picture2)}} />
-                    </View>
-                    <View style={styles.row}>
-                        {pic && (<View style={styles.sqr1}><Text style={styles.title}>are you sure about your pick?</Text><Image source={{uri:pic}} style={styles.picture}/></View> )}
-                    </View>
                 </View>
-                
-<View style={styles.btn}>
-        <TouchableOpacity onPress={()=>{console.log('sent!')}}>
-            <Icon color='#a0a0ff' size={100} style={{alignSelf:'center'}} name="send" />
-        </TouchableOpacity>
-</View>
-                
-
             </View>
         </View>
     )
@@ -65,19 +43,23 @@ const styles = StyleSheet.create({
         backgroundColor:'#00ffff'
     },
     picture:{
-        width: 150,
+        width: 260,
         height: 180,
-        alignSelf:'center'
+        alignSelf:'center',
+        resizeMode:'contain'
     },
     sqr:{
         flex:1,
-        height:200,
+        height:190,
         backgroundColor:'#fe9',
         alignSelf:'center',
         justifyContent:'center',
+        padding:10,
+        margin:10,
+        borderWidth:2
     },
     sqr1:{
-        height:220,
+        height:200,
         backgroundColor:'#0f9',
         alignSelf:'center',
         alignItems:'center',
@@ -117,10 +99,11 @@ const styles = StyleSheet.create({
         backgroundColor:'#00ffff'
     },
     space:{
-        width:20
+        width:20,
+        height:10
     },
     title:{
-        fontSize:16,
+        fontSize:20,
         alignSelf:'center'
     }
 

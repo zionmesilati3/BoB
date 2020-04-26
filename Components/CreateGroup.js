@@ -16,11 +16,15 @@ export default function CreateGroup({navigation}){
 
 useEffect(() => {
     (async () => {
-        console.log("in effect");
-        getData();
-        getUser();
+        const reScreen = navigation.addListener('focus',()=>{
+            getData();
+            getUser();
+            console.log("event listener in cg")
+          });
+          return reScreen;
     })(); 
   }, []);
+
 
 // get the group list from local storage
     async function getData(){
@@ -106,7 +110,7 @@ const changePhoneNumbers=()=>{
 // send the phone numbers of picked friends to DB to add to the new group
 
 const sendData=async()=>{
-    let pn;
+    //let pn;
     let phoneNumbersString = "'050555555111','050555555101','0522695041'";
 
    /* if(fl!==[]){//this function pass over all the contacts and add them to the string 

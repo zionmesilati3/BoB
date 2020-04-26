@@ -7,6 +7,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 export default function MyDecisions({navigation}){
     const[decisions,setDecisions]=useState(null)
     const[user,setUser]=useState(null);
+    const[closed,setClosed]=useState(null)
 //-------------------------------- step 1 --------------------------------//
 // this is the init function in react 
 // 1. we get the user from local storage 
@@ -14,8 +15,15 @@ export default function MyDecisions({navigation}){
 
 // 3. build of current decisions CARD is still in process
 
-    useEffect(() => {
-        (async () => {
+useEffect(()=>{
+    const reScreen = navigation.addListener('focus',()=>{
+      getData();
+      console.log("event listener in my Dec")
+    });
+    return reScreen;
+  },[]);
+
+async function getData(){
             try{
                 let value=await AsyncStorage.getItem('User');
                 if(value!==null){
@@ -27,8 +35,21 @@ export default function MyDecisions({navigation}){
                     })
                     .then((response)=>response.json())
                     .then((res)=>{
-                        console.log(res)
-                        setDecisions(res)
+                        let cList=[];
+                        let oList=[];
+                        if(res){
+                            res.map((dec)=>{
+                                if(dec.Close_indecision==0){
+                                    oList.push(dec);
+                                }
+                                else{
+                                    cList.push(dec);
+                                }
+                            })
+                        }
+                        console.log(cList)
+                        setDecisions(oList)
+                        setClosed(cList)
                 })
                     .catch((error)=>console.log(error))
 
@@ -39,26 +60,59 @@ export default function MyDecisions({navigation}){
             catch(error){
                 console.log(error)
             }
-        })(); 
-      }, []);
+        }
+
+const GR=(decID)=>{
+    GetResults(decID)
+}
 
 
+async function GetResults(decID){
+    await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/UserToUser/getAnswerPerDecision/'+user.Email+"/"+decID+ "/",{
+                        method:'GET',
+                        headers:{
+                            Accept:'application/json','Content-Type':'application/json',
+                        },
+                    })
+                    .then((response)=>response.json())
+                    .then((res)=>{
+                        if (!(res >= 0 || res <= 1))
+                     alert("nobody answer yet");
 
+                 else if (res > 0.5) {
+                        alert("img 1 win with " + res + " %");
+                    }
+                 else {
+                        res = 1 - res;
+                         alert("img 2 win with " + res + " %");
+                    }
+                    })
+                    .catch((error)=>console.log(error))
+}
 
     return(
         <View style={styles.container}>
-            <Text style={styles.title}>My Decisions</Text>
-            <View style={styles.spaceH}></View>
             <ScrollView>
             <View style={styles.container}>
+            <View style={styles.spaceH}></View><Text style={styles.title}>My Opened Decisions</Text><View style={styles.spaceH}></View>
                         {decisions&&decisions.map((item)=><View style={styles.sqr} key={item.IndecisionID}><View style={styles.spaceH}></View>
-                            <TouchableOpacity>
-                            <Text style={styles.title1} onPress={()=>console.log(item.IndecisionID)}> {item.Description_}</Text></TouchableOpacity>
+                            <Text style={styles.title1}> {item.Description_}</Text>
                             <View style={styles.spaceH}></View>
                             <View style={styles.row}>
-                                <Button style={styles.btnL} onPress={()=>console.log("Move to View decision",item.IndecisionID)} title="View Decision" />
+                                <Button style={styles.btnL} onPress={()=>navigation.navigate('My Single Decision',{Decision:item,User:user})} title="View Decision" />
                                 <View style={styles.spaceW}></View>
-                                <Button style={styles.btnR} onPress={()=>console.log("Stop Decision",item.IndecisionID)} title="Stop Decision" />
+                                <Button style={styles.btnR} onPress={()=>GR(item.IndecisionID)} title="Get Results" />
+                                <View style={styles.spaceW}></View>
+                                <Button style={styles.btnR} onPress={()=>navigation.navigate("Stop Decision",{Decision:item,User:user})} title="Stop Decision" />
+                            </View>
+                            <View style={styles.spaceH}></View>
+                        </View>)}
+                        <View style={styles.spaceH}></View><Text style={styles.title}>My Closed Decisions</Text><View style={styles.spaceH}></View>
+                        {closed&&closed.map((item)=><View style={styles.sqr} key={item.IndecisionID}><View style={styles.spaceH}></View>
+                            <Text style={styles.title1}> {item.Description_}</Text>
+                            <View style={styles.spaceH}></View>
+                            <View style={styles.row}>
+                                <Button style={styles.btnR} onPress={()=>GR(item.IndecisionID)} title="Get Results" />
                             </View>
                             <View style={styles.spaceH}></View>
                         </View>)}

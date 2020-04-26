@@ -15,17 +15,12 @@ export default function GroupList({navigation}){
         return reScreen;
       },[]);
 
-      useEffect(()=>{
-          console.log("first effect")
-          getData();
-      },[]);
     
         async function getData(){
             try{
                 let value=await AsyncStorage.getItem('groupList');
                 if(value!==null){
                     setGlist(JSON.parse(value));
-                    console.log(value)
                 }
             }
             catch(error){

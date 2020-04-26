@@ -283,7 +283,7 @@ async function getData(){
     return(
         <View style={styles.container}>
             <Text style={styles.title}>Decision</Text>
-            <TextInput onChangeText={text=>setDescription(text)} value={description} placeholder=" Enter Description" />
+            <TextInput style={{backgroundColor:'#a0faf0',}} onChangeText={text=>setDescription(text)} value={description} placeholder=" Enter Description" />
             <View style={styles.spaceH}></View>
             <View style={styles.container}>
 
@@ -291,7 +291,7 @@ async function getData(){
                 <View style={styles.colum}>
                     <View style={styles.row1}>
                     <View style={styles.spaceW}></View>
-                        <View style={styles.sqr1}>
+                        <View style={styles.sqr}>
                             {pic1 && (<Image
                             style={{width: 150, height: 200,alignSelf:'center'}}
                             source={{uri: pic1}}
@@ -326,7 +326,7 @@ async function getData(){
                         
                         <View style={styles.spaceW}></View>
                     </View>
-                    <ActionButton style={{container:{backgroundColor:'#5af'}}} icon="add" onPress={()=>MakeDecision()} />
+                    <ActionButton style={{container:{backgroundColor:'#5bf'}}} icon="add" onPress={()=>MakeDecision()} />
                 </View>
 
             </View>
@@ -361,21 +361,14 @@ const styles = StyleSheet.create({
     sqr:{
         flex:1,
         height:230,
-        backgroundColor:'#fe9',
-        alignSelf:'stretch',
-        justifyContent:'center',
-    },
-    sqr1:{
-        flex:1,
-        height:230,
-        backgroundColor:'#0f9',
+        backgroundColor:'#aecfe7',
         alignSelf:'stretch',
         justifyContent:'center',
     },
     sqr2:{
         flex:1,
-        height:270,
-        backgroundColor:'#a7a',
+        height:280,
+        backgroundColor:'#aecfe7',
         alignSelf:'stretch',
         justifyContent:'center',
     },

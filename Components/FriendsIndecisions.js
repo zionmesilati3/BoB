@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     sqr:{
             borderRadius:6,
             elevation:3,
-            backgroundColor:'#fff',
+            backgroundColor:'#aecfe7',
             shadowOffset:{width:1,height:1},
             shadowColor:'#000',
             shadowOpacity:0.3,

@@ -40,7 +40,7 @@ export default function Decisions({route,navigation}){
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor:'#00ffff'
+        
     },
     picture:{
         width: 260,
@@ -51,20 +51,12 @@ const styles = StyleSheet.create({
     sqr:{
         flex:1,
         height:190,
-        backgroundColor:'#fe9',
+        backgroundColor:'#aecfe7',
         alignSelf:'center',
         justifyContent:'center',
         padding:10,
         margin:10,
         borderWidth:2
-    },
-    sqr1:{
-        height:200,
-        backgroundColor:'#0f9',
-        alignSelf:'center',
-        alignItems:'center',
-        alignContent:'center',
-        justifyContent:'center',
     },
     colum:{
         flex:1,

@@ -38,14 +38,14 @@ export default function MyHome({navigation}){
                     <View style={styles.row1}>
                     <View style={styles.spaceW}></View>
                         <View style={styles.sqr}>
-                            <TouchableOpacity onPress={()=>{MoveTo('My Decisions')}}>
-                                <Icon color='#787' size={180} style={{alignSelf:'center',justifyContent:'center',}} name="live-help" />
+                            <TouchableOpacity onPress={()=>{MoveTo('Make Decision')}}>
+                                <Image style={styles.picture} source={require('./Images/createDecision.jpeg')} />
                             </TouchableOpacity>
                         </View>
                             <View style={styles.spaceW}></View>
-                        <View style={styles.sqr1}>
-                            <TouchableOpacity onPress={()=>{MoveTo('Create Group')}}>
-                                <Icon color='#787' size={180} style={{alignSelf:'center',justifyContent:'center',}} name="group" />
+                        <View style={styles.sqr}>
+                            <TouchableOpacity onPress={()=>{MoveTo('Friends Decisions')}}>
+                            <Image style={styles.picture} source={require('./Images/friendsDecisions.jpeg')} />
                             </TouchableOpacity>
                         </View>
                         <View style={styles.spaceW}></View>
@@ -57,15 +57,15 @@ export default function MyHome({navigation}){
                 <View style={styles.colum}>
                     <View style={styles.row1}>
                     <View style={styles.spaceW}></View>
-                        <View style={styles.sqr1}>
+                        <View style={styles.sqr}>
                             <TouchableOpacity onPress={()=>{MoveTo('My Decisions')}}>
-                                <Icon color='#787' size={180} style={{alignSelf:'center',justifyContent:'center',}} name="rate-review" />
+                            <Image style={styles.picture} source={require('./Images/myDecisions.jpeg')} />
                             </TouchableOpacity>
                         </View>
                             <View style={styles.spaceW}></View>
                         <View style={styles.sqr}>
-                            <TouchableOpacity onPress={()=>{console.log('sent!')}}>
-                                <Icon color='#787' size={180} style={{alignSelf:'center',justifyContent:'center',}} name="settings" />
+                            <TouchableOpacity onPress={()=>{MoveTo('Create Group')}}>
+                            <Image style={styles.picture} source={require('./Images/createGroup.jpeg')} />
                             </TouchableOpacity>    
                         </View>
                         <View style={styles.spaceW}></View>
@@ -78,14 +78,14 @@ export default function MyHome({navigation}){
                     <View style={styles.row1}>
                     <View style={styles.spaceW}></View>
                         <View style={styles.sqr}>
-                            <TouchableOpacity onPress={()=>{console.log('sent!')}}>
-                                <Icon color='#787' size={180} style={{alignSelf:'center',justifyContent:'center',}} name="settings" />
+                            <TouchableOpacity onPress={()=>{console.log('will be updated')}}>
+                            <Image style={styles.picture} source={require('./Images/changeDetails.jpeg')} />
                             </TouchableOpacity>
                         </View>
                         <View style={styles.spaceW}></View>
-                        <View style={styles.sqr1}>
-                            <TouchableOpacity onPress={()=>{console.log('sent!')}}>
-                                <Icon color='#787' size={180} style={{alignSelf:'center',justifyContent:'center',}} name="settings" />
+                        <View style={styles.sqr}>
+                            <TouchableOpacity onPress={()=>{console.log('will be updated')}}>
+                            <Image style={styles.picture} source={require('./Images/categories.jpeg')} />
                             </TouchableOpacity>
                         </View>
                         <View style={styles.spaceW}></View>
@@ -107,14 +107,17 @@ const styles = StyleSheet.create({
     sqr:{
         flex:1,
         height:200,
-        backgroundColor:'#fe9',
         alignSelf:'stretch',
         overflow:'hidden',
+        backgroundColor:'#aecfe7',
+        alignItems:'center',
+        alignContent:'center',
+        justifyContent:'center'
     },
     sqr1:{
         flex:1,
         height:200,
-        backgroundColor:'#0f9',
+        backgroundColor:'#aecfe7',
         alignSelf:'stretch',
         overflow:'hidden',
     },
@@ -143,5 +146,11 @@ const styles = StyleSheet.create({
     },
     spaceH:{
         height:5
+    },
+    picture:{
+        width: 230,
+        height: 180,
+        alignSelf:'center',
+        resizeMode:'contain'
     },
   });

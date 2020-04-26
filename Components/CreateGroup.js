@@ -242,7 +242,7 @@ const UsersAdder=async(groupID,phones)=>{
         <View style={styles.container}>
             <View style={styles.input}>
                 <Text>Title</Text>
-                <Card style={{container:{backgroundColor:'#3838c7',alignSelf:'stretch'}}}><TextInput onChangeText={text=>setGname(text)} value={gname} /></Card>
+                <Card style={{container:{backgroundColor:'#aecfe7',alignSelf:'stretch'}}}><TextInput onChangeText={text=>setGname(text)} value={gname} /></Card>
             </View>
 
 <ContactList placeContact={placeContact} />
@@ -257,7 +257,6 @@ const UsersAdder=async(groupID,phones)=>{
 const styles = StyleSheet.create({
     container:{
       flex:1,
-      backgroundColor:'#5af',
   },
   list:{
     flex:1,

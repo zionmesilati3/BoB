@@ -36,7 +36,7 @@ export default function ContactList(props,{navigation}){
 
 
     return(
-        <View style={{flex: 1,backgroundColor: '#5af',alignItems: 'center',justifyContent: 'center',borderBottomWidth:0.5,borderTopWidth:1}}>
+        <View style={{flex: 1,backgroundColor:'#aecfe7',alignItems: 'center',justifyContent: 'center',borderBottomWidth:0.5,borderTopWidth:1}}>
            
               <View style={styles.row}>
                 <View style={styles.spaceW}></View>

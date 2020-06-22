@@ -10,6 +10,7 @@ import GroupList from './Components/GroupList.js';
 import MyDecisionsStack from './Components/MyDecisionsStack.js';
 import FDecisionsStack from './Components/FDecisionsStack.js';
 import 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 
 const Drawer = createDrawerNavigator();
@@ -47,6 +48,7 @@ const [user,setUser]=useState('');
 // we have some other screens that cant be seen and they are not in the drawer like login,signin and others
 
   return (
+    <SafeAreaProvider>
 <NavigationContainer style={{backgroundColor:'#5af'}}>
   <Header user={user}/>
       <Drawer.Navigator initialRouteName="Home">
@@ -58,6 +60,7 @@ const [user,setUser]=useState('');
         <Drawer.Screen name="Create Group" component={CreateGroup} />
       </Drawer.Navigator>
 </NavigationContainer>
+</SafeAreaProvider>
 
 );
 }

@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from 'react';
-import { View, Text,StyleSheet,AsyncStorage,ScrollView,Button } from 'react-native';
+import { View, Text,StyleSheet,AsyncStorage,ScrollView,Button, ActivityIndicator,Image } from 'react-native';
 import { ActionButton,Card } from 'react-native-material-ui';
 import { CheckBox } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -68,6 +68,8 @@ const GR=(decID)=>{
 
 
 async function GetResults(decID){
+    console.log(user);
+    console.log(decID)
     await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/UserToUser/getAnswerPerDecision/'+user.Email+"/"+decID+ "/",{
                         method:'GET',
                         headers:{
@@ -76,14 +78,14 @@ async function GetResults(decID){
                     })
                     .then((response)=>response.json())
                     .then((res)=>{
+                        console.log(res)
                         if (!(res >= 0 || res <= 1))
                      alert("nobody answer yet");
 
-                 else if (res > 0.5) {
-                        alert("img 1 win with " + res + " %");
+                 else if (res < 0.5) {
+                        alert("img 1 win with " + (1-res) + " %");
                     }
                  else {
-                        res = 1 - res;
                          alert("img 2 win with " + res + " %");
                     }
                     })
@@ -99,23 +101,35 @@ async function GetResults(decID){
                             <Text style={styles.title1}> {item.Description_}</Text>
                             <View style={styles.spaceH}></View>
                             <View style={styles.row}>
-                                <Button style={styles.btnL} onPress={()=>navigation.navigate('My Single Decision',{Decision:item,User:user})} title="View Decision" />
+                                <Image style={styles.picture} source={{uri: item.Img1}} />
                                 <View style={styles.spaceW}></View>
-                                <Button style={styles.btnR} onPress={()=>GR(item.IndecisionID)} title="Get Results" />
-                                <View style={styles.spaceW}></View>
-                                <Button style={styles.btnR} onPress={()=>navigation.navigate("Stop Decision",{Decision:item,User:user})} title="Stop Decision" />
+                                <Image style={styles.picture} source={{uri: item.Img2}} />
                             </View>
                             <View style={styles.spaceH}></View>
-                        </View>)}
+                            <View style={styles.row}>
+                                <Button style={styles.btnL} onPress={()=>navigation.navigate('My Single Decision',{Decision:item,User:user})} title="View" />
+                                <View style={styles.spaceW}></View>
+                                <Button style={styles.btnR} onPress={()=>GR(item.IndecisionID)} title="Results" />
+                                <View style={styles.spaceW}></View>
+                                <Button style={styles.btnR} onPress={()=>navigation.navigate("Stop Decision",{Decision:item,User:user})} title="Stop" />
+                            </View>
+                            <View style={styles.spaceH}></View>
+                        </View>)}{!decisions&&<ActivityIndicator animating={true} color='#bc2b78' size='large' />}
                         <View style={styles.spaceH}></View><Text style={styles.title}>My Closed Decisions</Text><View style={styles.spaceH}></View>
                         {closed&&closed.map((item)=><View style={styles.sqr} key={item.IndecisionID}><View style={styles.spaceH}></View>
                             <Text style={styles.title1}> {item.Description_}</Text>
                             <View style={styles.spaceH}></View>
                             <View style={styles.row}>
-                                <Button style={styles.btnR} onPress={()=>GR(item.IndecisionID)} title="Get Results" />
+                                <Image style={styles.picture} source={{uri: item.Img1}} />
+                                <View style={styles.spaceW}></View>
+                                <Image style={styles.picture} source={{uri: item.Img2}} />
                             </View>
                             <View style={styles.spaceH}></View>
-                        </View>)}
+                            <View style={styles.row}>
+                                <Button style={styles.btnR} onPress={()=>GR(item.IndecisionID)} title="Results" />
+                            </View>
+                            <View style={styles.spaceH}></View>
+                        </View>)}{!closed&&<ActivityIndicator animating={true} color='#bc2b78' size='large' />}
             </View>
             </ScrollView>
                 <Button onPress={()=>navigation.navigate('Make Decision')} title="Make Decision" />
@@ -127,16 +141,29 @@ const styles = StyleSheet.create({
     container:{
         flex:1,
     },
+    picture:{
+        width:80,
+        height:100,
+        alignSelf:'center',
+        padding:60,
+    },
     sqr:{
-            borderRadius:6,
-            elevation:3,
-            backgroundColor:'#aecfe7',
-            shadowOffset:{width:1,height:1},
-            shadowColor:'#000',
-            shadowOpacity:0.3,
-            shadowRadius:1,
-            marginHorizontal:3,
-            marginVertical:4,
+        marginTop:10,
+        marginBottom:10,
+        marginLeft:20,
+        marginRight:20,
+        padding:10,
+        borderRadius:6,
+        elevation:3,
+        backgroundColor:'#fcfcfc',
+        shadowOffset:{width:1,height:1},
+        shadowColor:'#000',
+        shadowOpacity:0.3,
+        shadowRadius:1,
+        marginHorizontal:3,
+        marginVertical:4,
+        alignSelf:'stretch',
+        alignItems:'center',
     },
     title:{
         fontSize:24,

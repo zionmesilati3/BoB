@@ -1,12 +1,12 @@
 import React,{useState,useEffect} from 'react';
-import { View, Text,StyleSheet,TextInput,ScrollView,AsyncStorage,Button } from 'react-native';
+import { View, Text,StyleSheet,TextInput,ScrollView,AsyncStorage,Button,Alert } from 'react-native';
 import { Card,ActionButton } from 'react-native-material-ui';
 import ContactList from './ContactList.js';
+import * as SMS from 'expo-sms';
 
 export default function CreateGroup({navigation}){
 
-    const[gname,setGname]=useState('enter group name')
-    const[groups,setGroups]=useState([])
+    const[gname,setGname]=useState('')
     const[fl,setFl]=useState([])
     const[user,setUser]=useState(null)
 
@@ -17,7 +17,6 @@ export default function CreateGroup({navigation}){
 useEffect(() => {
     (async () => {
         const reScreen = navigation.addListener('focus',()=>{
-            getData();
             getUser();
             console.log("event listener in cg")
           });
@@ -26,37 +25,74 @@ useEffect(() => {
   }, []);
 
 
-// get the group list from local storage
-    async function getData(){
-        try{
-            let value=await AsyncStorage.getItem('groupList');
-            if(value!==null){
-                setGroups(JSON.parse(value));
-                console.log("groups are set")
-            }
-        }
-        catch(error){
-            console.log(error)
-        }
-    }
 // save the contact from contact list in a list and save it in state
 const placeContact=(friend)=>{
-    friend.checked=!friend.checked;
-    fList=[...fl];
-    if(friend.checked){
-        fList.push(friend);
+    if(fl.length<=10){
+        friend.checked=!friend.checked;
+        fList=[...fl];
+        if(friend.checked){
+            fList.push(friend);
+        }
+        else{
+            let index=fList.indexOf(friend);
+            fList.map((f)=>{
+                if(index>-1){
+                    fList.splice(index,1);
+                }
+            })
+        }
+        setFl(fList);
     }
-    else{
-        let index=fList.indexOf(friend);
-        fList.map((f)=>{
-            if(index>-1){
-                fList.splice(index,1);
+    else{alert("group is full")}
+}
+
+const SendSMS=async(phone)=>{
+    const isAvailable = await SMS.isAvailableAsync();
+if (isAvailable) {
+  // do your SMS stuff here also the link to download our app will be here
+  const { result } = await SMS.sendSMSAsync(
+    ["'"+phone+"'"],
+    'i want you to help me with my decisions please join in and help me'+' https://expo.io/@zionmesilati3/BobApp'
+  );
+} else {
+  // misfortune... there's no SMS available on this device
+  alert("sms is not available")
+}
+}
+
+const CheckFriend=async(friend)=>{
+    await fetch("https://proj.ruppin.ac.il/igroup21/proj/api/User/phoneNumbersString/'"+friend.phone+"'/",{
+            method:'GET',
+            headers:{
+                Accept:'application/json','Content-Type':'application/json',
+            },
+        })
+        .then((response)=>response.json())
+        .then((res)=>{
+            if(res.length===0){
+                Alert.alert(
+                    "user not found",
+                    "we cant find your friend in our DB would you like to invite him?",
+                    [
+                        {
+                            text:"yes",
+                            onPress:()=>SendSMS(friend.phone)
+                        },
+                        {
+                            text:"no",
+                            onPress:()=>console.log("do noting")
+                        }
+                    ],
+                    {cancelable:false}
+                    )
+            }
+            else{
+                placeContact(friend)
             }
         })
-    }
-    setFl(fList);
-    console.log(fList);
+        .catch((error)=>console.log(error))
 }
+
 // get user from local storage
 async function getUser(){
     try{
@@ -71,26 +107,6 @@ async function getUser(){
     }
 }
 
-// stores group in local storage
-
-const _storeData = async(gname) => {
-    let groupList=[...groups];
-    let g={
-        friends:[...fl],
-        name:gname,
-        checked:false,
-    };
-    groupList.push(g);
-    setGroups(groupList);
-    console.log(groupList)
-    try{
-        await AsyncStorage.setItem('groupList',JSON.stringify(groupList));
-        console.log("succses");
-    }
-    catch(error){
-        console.log(error);
-    }
-}
 
 /*
 const changePhoneNumbers=()=>{
@@ -111,24 +127,24 @@ const changePhoneNumbers=()=>{
 
 const sendData=async()=>{
     //let pn;
-    let phoneNumbersString = "'050555555111','050555555101','0522695041'";
-
-   /* if(fl!==[]){//this function pass over all the contacts and add them to the string 
-        phoneNumbersString="";
+    let phoneNumbersString = "'050555555111','050555555101','0522695041',";
+    // we can use this if and map statements to send
+    if(fl.length>0){
         fl.map((c)=>{
-            pn=c.phoneNumbers[0].number;
-            pn=pn.replace("+972 ",'0');
+            pn=c.phone;
+            pn=pn.replace("+972",'0');
+            pn=pn.replace(" ",'');
             pn=pn.replace("-",'');
             pn=pn.replace("-",'');
             phoneNumbersString+="'"+pn+"',";
         });
         phoneNumbersString=phoneNumbersString.slice(0,-1);
-        
-    }*/
-// here we send the string of phone numbers we made to the data base 
-// importent thing to note is that as of now we need the phone numbers to exist in the data base so we still use "static numbers that we have in the DB".
+    }
+    // if the length is more than 10 the
+    // here we send the string of phone numbers we made to the data base 
+    // importent thing to note is that as of now we need the phone numbers to exist in the data base so we still use "static numbers that we have in the DB".
 console.log(phoneNumbersString);
-    fetch('https://proj.ruppin.ac.il/igroup21/proj/api/User/phoneNumbersString/'+phoneNumbersString+"/",{
+    await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/User/phoneNumbersString/'+phoneNumbersString+"/",{
             method:'GET',
             headers:{
                 Accept:'application/json','Content-Type':'application/json',
@@ -138,8 +154,8 @@ console.log(phoneNumbersString);
         .then((res)=>groupCheck(res))
         .catch((error)=>console.log(error))
         .finally(()=>console.log('sent numbers'))
+    
 }
-
 // **** 2 **** //
 // check if the group name is already used by the user and take care of it
 
@@ -241,14 +257,15 @@ const UsersAdder=async(groupID,phones)=>{
     return(
         <View style={styles.container}>
             <View style={styles.input}>
-                <Text>Title</Text>
-                <Card style={{container:{backgroundColor:'#aecfe7',alignSelf:'stretch'}}}><TextInput onChangeText={text=>setGname(text)} value={gname} /></Card>
+                <Text style={styles.title}>Group Creation</Text>
+                <View style={styles.sqr}><TextInput onChangeText={text=>setGname(text)} value={gname} placeholder='enter group name' /></View>
+                <Text style={styles.title}>Pick Members</Text>
             </View>
 
-<ContactList placeContact={placeContact} />
+<ContactList placeContact={CheckFriend} />
 
-<Button title="send group to server" onPress={()=>sendData()} />
-                <ActionButton style={{container:{backgroundColor:'#3838c7'}}} icon="add" onPress={()=>_storeData(gname)} />
+
+                <ActionButton style={{container:{backgroundColor:'#3838c7'}}} icon="add" onPress={()=>sendData()} />
 
         </View>
     )
@@ -257,7 +274,26 @@ const UsersAdder=async(groupID,phones)=>{
 const styles = StyleSheet.create({
     container:{
       flex:1,
+      backgroundColor:'#fcfcfc',
   },
+  sqr:{
+    marginTop:3,
+    marginBottom:3,
+    padding:3,
+    borderRadius:6,
+    elevation:3,
+    backgroundColor:'#fcfcfc',
+    shadowOffset:{width:1,height:1},
+    shadowColor:'#000',
+    shadowOpacity:0.3,
+    shadowRadius:1,
+    marginHorizontal:3,
+    marginVertical:4,
+    alignSelf:'stretch',
+    alignItems:'center',
+    marginRight:10,
+    marginLeft:10,
+},
   list:{
     flex:1,
     alignSelf:'stretch'
@@ -271,6 +307,10 @@ const styles = StyleSheet.create({
     alignContent:'center',
     alignItems:'flex-start',
     alignSelf:'center'
+},
+title:{
+    fontSize:20,
+    alignSelf:'center',
 },
   spaceW:{
       width:10

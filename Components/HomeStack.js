@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Home from './MyHome.js';
 import Login from './Login.js';
 import SignUp from './SignUp.js';
+import Commercial from './Commercial.js';
 
 const Stack = createStackNavigator();
 
@@ -17,6 +18,7 @@ export default function HomeStack({navigation}){
             <Stack.Screen name="Login" component={Login} options={{headerShown:false}} />
             <Stack.Screen name="SignUp" component={SignUp} options={{headerShown:false}} />
             <Stack.Screen name="Home" component={Home} options={{headerShown:false}} />
+            <Stack.Screen name="Commercial" component={Commercial} options={{headerShown:false}} />
         </Stack.Navigator>
     )
 }

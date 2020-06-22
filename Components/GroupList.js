@@ -1,68 +1,117 @@
 import React,{useState, useEffect} from 'react';
-import { View, Text,StyleSheet,AsyncStorage,ScrollView,Button,TouchableOpacity } from 'react-native';
+import { View, Text,StyleSheet,AsyncStorage,ScrollView,Button,TouchableOpacity, ActivityIndicator } from 'react-native';
 import { ActionButton,Card,Icon} from 'react-native-material-ui';
 
 export default function GroupList({navigation}){
 
     const[del,setDel]=useState(false);
-    const[glist,setGlist]=useState([]);
-
+    const[glist,setGlist]=useState(null);
+    const[user,setUser]=useState(null);
+    var GL=[];
+    
     useEffect(()=>{
         const reScreen = navigation.addListener('focus',()=>{
           getData();
           console.log("event listener")
         });
         return reScreen;
-      },[]);
+      },);
 
     
-        async function getData(){
-            try{
-                let value=await AsyncStorage.getItem('groupList');
-                if(value!==null){
-                    setGlist(JSON.parse(value));
+      async function getData(){
+        try{
+            let value=await AsyncStorage.getItem('User');
+            if(value!==null){
+                setUser(JSON.parse(value));
+                getGroupsFromDB(JSON.parse(value));
+                console.log("get data")
+            }
+        }
+        catch(error){
+            console.log(error)
+        }
+    }
+
+    const getGroupsFromDB=async(u)=>{
+        try{
+        await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Group/'+u.Email+'/',{
+            method:'GET',
+            headers:{
+                Accept:'application/json','Content-Type':'application/json',
+            },
+        })
+        .then((response)=>response.json())
+        .then((res)=>{
+            let GroupL=[];
+            if(res!==null){
+                res.map((g)=>{
+                    let GROUP={
+                        ...g,
+                        "Users":[],
+                    }
+                    GroupL.push(GROUP);
+                })
+                setGlist(GroupL);
+            }
+        })
+        .catch((error)=>console.log(error))
+    }
+    catch(error){
+        throw error;
+    }
+    }
+
+
+    const getGroupUsers=async(g)=>{
+        try{
+                await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/UserInGroup/Users/'+g.Group_ID+'/',{
+                method:'GET',
+                headers:{
+                    Accept:'application/json','Content-Type':'application/json',
+                },
+                })
+                .then((response)=>response.json())
+                .then((res)=>{
+                    if(res!==null){
+                        GL=glist;
+                        GL.map((gr)=>{
+                            if(gr.Group_ID===g.Group_ID){
+                                gr.Users=res;
+                                console.log(gr);
+                            }
+                            else{
+                                gr.Users=[];
+                                
+                            }
+                        })
+                        
                 }
-            }
-            catch(error){
-                console.log(error)
-            }
-        }
+                })
+                .catch((error)=>console.log(error))
+                setGlist(GL);
+    }
+    catch(error){
+        throw error;
+    }
+    }
 
-        const delGroup=(g)=>{
-            console.log(g.name)
-        }
-
-        const delFromGroup=(g,f)=>{
-            console.log(g.name)
-            console.log(f.name)
-        }
 
     return(
         <View style={styles.container}>
-            <Text>Group List</Text>
+            <Text style={styles.title1} onPress={()=>console.log(glist)}>Groups</Text>
             <ScrollView>
                 <View style={styles.container1}>
-                    {glist.map((g,key)=>glist && <View style={styles.group} key={key}><Card>
-                        <Text style={styles.title}>Group name: {g.name}</Text>
-                            {(del && <TouchableOpacity onPress={()=>{delGroup(g)}}>
+                    {glist && glist.map((g,key)=>(g.Group_name!==''&&<View style={styles.group} key={key}>
+                    <TouchableOpacity onPress={()=>getGroupUsers(g)}><Text style={styles.title}>{g.Group_name}</Text></TouchableOpacity>
+                        {g.Users&&<Text style={styles.subtitle}>{g.Users.map((u)=>
+                            u.User_email+"\n"
+                        )}</Text>}
+                            {del&&<TouchableOpacity onPress={()=>{console.log(g)}}>
                                                 <Icon color='#a0a0ff' size={30} style={{alignSelf:'flex-end'}} name="delete" />
-                            </TouchableOpacity>)}
-                            </Card>
-                            
-                                <View style={styles.friends}><Card>
-                                <Text>participants:</Text>
-                                    {g.friends.map((f,key)=><View key={key}>
-                                            <Text>{" "+f.name+" - "+(f.phoneNumbers && f.phoneNumbers[0].number)}</Text>
-                                        {(del && <TouchableOpacity onPress={()=>{delFromGroup(g,f)}}>
-                                                <Icon color='#a0a0ff' size={30} style={{alignSelf:'flex-end'}} name="delete" />
-                                        </TouchableOpacity>)}
-                                    </View>)}
-                                    </Card>
-                                </View>
-                        </View>)}
+                            </TouchableOpacity>}
+                        </View>))}{!glist&&<ActivityIndicator animating={true} color='#bc2b78' size='large' />}
                 </View>
             </ScrollView>
-            <ActionButton style={{container:{backgroundColor:'#3838c7'}}} icon="delete" onPress={()=>setDel(!del)} />
         </View>
     )
 }
@@ -75,9 +124,28 @@ const styles = StyleSheet.create({
       alignItems:'flex-start',
       alignSelf:'center'
     },
+    title:{
+        fontSize:20,
+        alignSelf:'center',
+        alignContent:'center',
+        margin:5,
+    },
+    subtitle:{
+        fontSize:14,
+        alignSelf:'flex-start',
+        alignContent:'center',
+        margin:5,
+    },
+    title1:{
+        fontSize:24,
+        alignSelf:'center',
+        alignContent:'center',
+        margin:5,
+        borderBottomWidth:0.2,
+    },
     container:{
         flex:1,
-        backgroundColor:'#5af'
+        backgroundColor:'#fff'
     },
     container1:{
         flex:1,
@@ -85,11 +153,18 @@ const styles = StyleSheet.create({
         alignContent:'center',
     },
     group:{
-        backgroundColor:'#5af',
-        flex:1,
         alignSelf:'stretch',
-        alignContent:'center',
         alignItems:'center',
+        alignContent:'center',
+        borderRadius:6,
+        elevation:3,
+        backgroundColor:'#fafafa',
+        shadowOffset:{width:1,height:1},
+        shadowColor:'#000',
+        shadowOpacity:0.3,
+        shadowRadius:2,
+        marginHorizontal:4,
+        marginVertical:6,
     },
     friends:{
         alignContent:'center',

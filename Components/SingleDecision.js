@@ -1,75 +1,115 @@
 import React,{useState, useEffect} from 'react';
-import { View, Text,StyleSheet,AsyncStorage,ScrollView,Image,Button,FlatList,TouchableOpacity,useWindowDimensions } from 'react-native';
+import { View, Text,StyleSheet,AsyncStorage,ScrollView,Image,Button,FlatList,TouchableOpacity,useWindowDimensions,Slider } from 'react-native';
 import { ActionButton,Card,Icon } from 'react-native-material-ui';
 
 
 export default function Decisions({route,navigation}){
 // single decision page still need alot of work
 
-    const [decision,setDecision]=useState(route.params.Decision)
-    const [pic,setPic]=useState(null)
-    const [picture1,setPicture1]=useState(route.params.Decision.Img1)
-    const [picture2,setPicture2]=useState(route.params.Decision.Img2)
-    const [answer1,setAnswer1]=useState(0)
-    const [answer2,setAnswer2]=useState(0)
+const [decision,setDecision]=useState(route.params.Decision)
+const [pic,setPic]=useState(null)
+const [picture1,setPicture1]=useState(route.params.Decision.Img1)
+const [picture2,setPicture2]=useState(route.params.Decision.Img2)
+const [answer,setAnswer]=useState(50)
+const [picked,setPicked]=useState(2)
 
 
-
-
-
-
-    const ChosenAnswer=(picked)=>{
-        if(picked===1){
-            setPic(picture1);
-            setAnswer1(84/100);
-            setAnswer2(16/100);
-        }
-        else{
-            setPic(picture2);
-            setAnswer1(34/100);
-            setAnswer2(66/100);
-        }
+const ChosenAnswer=(value)=>{
+    if(value<50){
+        setPic(picture1);
+        setAnswer(value);
+        setPicked(0)
     }
-
-    async function SendAnswer(){
-        if(answer1===0 && answer2===0){console.log("please pick an answer")}
-        else{
-        let finale_answer=0;
-        if(answer1>=0.51){finale_answer=1};
-        let UD={
-            "IndecisionID": decision.IndecisionID, 
-            "UserInGroup_emailParticipant": route.params.User.Email,
-            "UserInGroup_groupID": decision.Group_groupID,
-            "Pic_num": finale_answer,
-            "Percent_option1": answer1,
-            "Percent_option2": answer2,
-        }
-        console.log(UD)
-        await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/UserInIndecision/updateAnswer/',{
-            method:'PUT',
-            headers:{
-                Accept:'application/json','Content-Type':'application/json',
-            },
-            body:JSON.stringify(UD)
-        })
-        .then((response)=>response.json())
-        .then((json)=>{
-            console.log(json)
-            console.log("user has answered decision")
-            navigation.navigate('Friends Decisions')
-            alert("Thank you for the help")
-        })
-        .catch((error)=>console.log(error))
-        .finally(()=>console.log('finished everything'))
+    if(value>50){
+        setPic(picture2);
+        setAnswer(value);
+        setPicked(1)
+    }
+    else{
+        console.log("the user didnt put a specific pick")
     }
 }
 
+    async function SendAnswer(){
+        
+        if(picked===2&&answer===50){console.log("please pick an answer")}
+        else{
+            // here we need to send notification to the user in {decision.User_email}
+            // the message will be something like "route.params.User.First_name route.params.User.Last_name has answerd your decision"
+            // **** we will only send the notification in the fetch method after the "user has answerd decision" log **** //
+            console.log(route.params.User)
+            console.log(decision)
+            let UD={
+                "IndecisionID": decision.IndecisionID, 
+                "UserInGroup_emailParticipant": route.params.User.Email,
+                "UserInGroup_groupID": decision.Group_groupID,
+                "Pic_num": picked,
+                "Percent_option1": ((100-answer)/100),
+                "Percent_option2": (answer/100),
+            }
+            console.log(UD)
+            await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/UserInIndecision/updateAnswer/',{
+                method:'PUT',
+                headers:{
+                    Accept:'application/json','Content-Type':'application/json',
+                },
+                body:JSON.stringify(UD)
+            })
+            .then((response)=>response.json())
+            .then((json)=>{
+                console.log(json)
+                console.log("user has answered decision")
+                getToken();
+                alert("Thank you for the help")
+            })
+            .catch((error)=>console.log(error))
+            .finally(()=>console.log('finished everything'))
+        }
+    }
 
+    const getToken=async()=>{
+        let str="'"+decision.User_email+"'";
+        await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/UsersPushNotifications/'+str+'/',{
+            method:'GET',
+            headers:{
+                Accept:'application/json','Content-Type':'application/json',
+            },
+        })
+        .then((response)=>response.json())
+        .then((res)=>{
+            if(res!==null){
+                res.map((mem)=>sendPush(mem))
+            }
+        })
+        .catch((error)=>console.log(error))
+    }
+
+
+    const sendPush=async(mem)=>{
+        const message = {
+            to: mem.Token,
+            sound: 'default',
+            title: "user has answerd your decision",
+            body: "hello "+mem.Email+" your friend "+route.params.User.Email+" has answerd your decision",
+            data: { data: 'i dont know what this does' },
+            _displayInForeground: true,
+          };
+          const response = await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+    navigation.navigate('Friends Decisions');
+    }
 
     return(
         <View style={styles.container}>
             <View style={styles.spaceH}></View>
-            <Text style={styles.title}> {decision.User_email} need your aid</Text>
+            <Text style={styles.title}> {decision.User_email} needs your help</Text>
             <Text style={styles.title}> {decision.Description_}</Text>
             <View style={styles.container}>
 
@@ -94,14 +134,33 @@ export default function Decisions({route,navigation}){
                     </View>
                     
                     <View style={styles.row2}>
-    
-                        <Button title=" pick picture 1" onPress={()=>{ChosenAnswer(1)}} />
-                        <View style={styles.space}></View><View style={styles.space}></View><View style={styles.space}></View>
-                        <Button title=" pick picture 2" onPress={()=>{ChosenAnswer(2)}} />
+
+                        <Slider
+                            minimumValue={0}
+                            maximumValue={100}
+                            minimumTrackTintColor="#1EB1FC"
+                            maximumTractTintColor="#1EB1FC"
+                            step={1}
+                            value={answer}
+                            onValueChange={value => ChosenAnswer(value)}
+                            style={styles.slider}
+                            thumbTintColor="#1EB1FC"
+                        />
+
+                        
                     </View>
                     <View style={styles.spaceH}></View>
                     <View style={styles.row}>
-                        {pic && (<View style={styles.sqr1}><Text style={styles.title}>are you sure about your pick?</Text><Image source={{uri:pic}} style={styles.picture}/></View> )}
+                        {pic &&(picked===1 && (<View style={styles.sqr1}>
+                            <Text style={styles.title}>you vote {answer}% in favor of: </Text>
+                            <View style={styles.spaceH}></View>
+                        <Image source={{uri:pic}} style={styles.picture}/>
+                        </View> )||picked===0 && (<View style={styles.sqr1}>
+                            <Text style={styles.title}>you vote {(100-answer)}% in favor of: </Text>
+                            <View style={styles.spaceH}></View>
+                        <Image source={{uri:pic}} style={styles.picture}/>
+                        </View> )
+                        )}
                     </View>
                 </View>
                 
@@ -116,10 +175,16 @@ export default function Decisions({route,navigation}){
         </View>
     )
 }
-
+/**
+ * 
+ * <Button title=" pick picture 1" onPress={()=>{ChosenAnswer(1)}} />
+                        <View style={styles.space}></View><View style={styles.space}></View><View style={styles.space}></View>
+                        <Button title=" pick picture 2" onPress={()=>{ChosenAnswer(2)}} />
+ */
 const styles = StyleSheet.create({
     container:{
         flex:1,
+        backgroundColor:'#ffffff',
     },
     picture:{
         width: 150,
@@ -129,17 +194,22 @@ const styles = StyleSheet.create({
     sqr:{
         flex:1,
         height:200,
-        backgroundColor:'#aecfe7',
+        backgroundColor:'#fafafa',
         alignSelf:'center',
         justifyContent:'center',
+        borderWidth:0.5,
     },
     sqr1:{
-        height:220,
-        backgroundColor:'#aecfe7',
+        flex:1,
         alignSelf:'center',
         alignItems:'center',
         alignContent:'center',
         justifyContent:'center',
+        borderWidth:0.5,
+        marginLeft:30,
+        marginRight:30,
+        paddingBottom:10,
+        paddingTop:10,
     },
     colum:{
         flex:1,
@@ -148,7 +218,7 @@ const styles = StyleSheet.create({
     },
     row2:{
         flex:0,
-        flexDirection: 'row',
+
         alignContent:'center',
         justifyContent:'center',
         alignItems:'flex-start',
@@ -171,7 +241,6 @@ const styles = StyleSheet.create({
     },
     btn:{
         alignSelf:'stretch',
-        backgroundColor:'#00ffff'
     },
     space:{
         width:20
@@ -182,6 +251,10 @@ const styles = StyleSheet.create({
     },
     spaceH:{
         height:10,
+    },
+    slider:{
+        alignSelf:'stretch',
+        padding:10
     }
 
   });

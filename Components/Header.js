@@ -1,6 +1,7 @@
 import React,{useState, useEffect} from 'react';
-import { View, Text,StyleSheet,AsyncStorage,ScrollView } from 'react-native';
+import { View, Text,StyleSheet,AsyncStorage,ScrollView,Image } from 'react-native';
 import { ActionButton,Card,Button,Icon } from 'react-native-material-ui';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Header(){
 
@@ -21,36 +22,51 @@ const [user,setUser]=useState('')
   }, []);
 
     return(
-      <View style={styles.container}>
-        <View style={styles.row}>
-            <Icon color='#55f' size={52} style={{justifyContent:'center'}} name="send" />
-            <View style={styles.space}></View>
-            <Text style={styles.title}>Buy Or Bye</Text>
+      <SafeAreaView style={styles.container}>
+        <View>
+          <Image style={styles.picture} source={require('./Images/logo.png')} />
         </View>
-      </View>
+      </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-      backgroundColor:'#5af',
-      height:100,
-      borderBottomWidth:1,
-      borderBottomColor:'black'
+      backgroundColor:'#fff',
+      borderBottomWidth:0.5,
+      borderBottomColor:'black',
+      justifyContent:'center'
     },
+    picture:{
+      alignSelf:'center',
+    },
+    card:{
+      borderRadius:6,
+      elevation:3,
+      backgroundColor:'#fff',
+      shadowOffset:{width:1,height:1},
+      shadowColor:'#000',
+      shadowOpacity:0.3,
+      shadowRadius:2,
+      marginHorizontal:4,
+      marginVertical:6,
+  },
     row:{
       flexDirection:'row',
       flex:1,
-      justifyContent:'center',
-      alignContent:'flex-end',
-      alignItems:'center',
+      
     },
     title:{
       fontSize:40,
       borderBottomWidth:1,
-      alignSelf:'center'
+      borderBottomColor:'#fbd55a',
+      justifyContent:'center',
+      color:'#fbd55a',
   },
   space:{
     width:10
+  },
+  space1:{
+    height:10
   },
   });

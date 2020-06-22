@@ -84,7 +84,6 @@ async function getData(){
 //-------------------------------- step 3 --------------------------------//
 // send the decision to server and post it
       const MakeDecision=async()=>{
-          console.log(user.Email,groupID,description,pic1,pic2)
           if(user.Email&&groupID&&description&&pic1&&pic2){
           let Indecision={
             "Group_groupID": groupID,
@@ -96,7 +95,6 @@ async function getData(){
             "CurrectAnswerPercent":"",
             "closeIndecision":0,
     };
-    console.log(Indecision);
         await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/Indecision/',{
             method:'POST',
             headers:{
@@ -121,7 +119,7 @@ async function getData(){
         .then((response)=>response.json())
         .then((res)=>{
             console.log("that is the data we look for")
-            console.log(res)
+            console.log("decision id function res: ",res)
             getGroupMembers(res[0].IndecisionID)
         })
         .catch((error)=>console.log(error))
@@ -129,6 +127,7 @@ async function getData(){
     }
 // function that gets the group members from the DB
     const getGroupMembers=async(DecisionID)=>{
+        let str='';
         await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/UserInGroup/GroupNameString/'+groupID+'/'+DecisionID+'/',{
             method:'GET',
             headers:{
@@ -137,19 +136,57 @@ async function getData(){
         })
         .then((response)=>response.json())
         .then((res)=>{
-            console.log("that is the last data")
-            console.log(res)
+            res.map((mem)=>{
+                str+="'"+mem.User_email+"',";
+            })
+            str=str.slice(0,-1);
+            getTokens(str);
         })
         .catch((error)=>console.log(error))
-        .finally(()=>console.log('finished everything'))
+    }
+
+    const getTokens=async(membersString)=>{
+        await fetch('https://proj.ruppin.ac.il/igroup21/proj/api/UsersPushNotifications/'+membersString+'/',{
+            method:'GET',
+            headers:{
+                Accept:'application/json','Content-Type':'application/json',
+            },
+        })
+        .then((response)=>response.json())
+        .then((res)=>{
+            res.map((mem)=>sendPush(mem))
+        })
+        .catch((error)=>console.log(error))
+    }
+
+
+    const sendPush=async(mem)=>{
+        const message = {
+            to: mem.Token,
+            sound: 'default',
+            title: "Decision alert from "+user.Email,
+            body: "hello "+mem.Email+" your friend "+user.Email+" need your help with his decision",
+            data: { data: 'i dont know what this does' },
+            _displayInForeground: true,
+          };
+          const response = await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+    navigation.navigate('Home');
     }
 
       const handleChoosePhoto1 = async() => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes:ImagePicker.MediaTypeOptions.All,
             allowsEditing:true,
-            aspect:[4,3],
-            quality:1
+            aspect:[3,4],
+            quality:0.4
         });
         console.log("result!!",result);
         if(result.cancelled){
@@ -203,8 +240,8 @@ async function getData(){
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes:ImagePicker.MediaTypeOptions.All,
             allowsEditing:true,
-            aspect:[4,3],
-            quality:1
+            aspect:[3,4],
+            quality:0.4
         });
         console.log("result!!",result);
         if(result.cancelled){
@@ -283,7 +320,7 @@ async function getData(){
     return(
         <View style={styles.container}>
             <Text style={styles.title}>Decision</Text>
-            <TextInput style={{backgroundColor:'#a0faf0',}} onChangeText={text=>setDescription(text)} value={description} placeholder=" Enter Description" />
+            <View style={styles.inputStyle}><TextInput style={{backgroundColor:'#fafafa',}} onChangeText={text=>setDescription(text)} value={description} placeholder=" Enter Description" /></View>
             <View style={styles.spaceH}></View>
             <View style={styles.container}>
 
@@ -293,13 +330,13 @@ async function getData(){
                     <View style={styles.spaceW}></View>
                         <View style={styles.sqr}>
                             {pic1 && (<Image
-                            style={{width: 150, height: 200,alignSelf:'center'}}
+                            style={{width: 160, height: 200,alignSelf:'center'}}
                             source={{uri: pic1}}
                             />)}
                         </View>
                         <View style={styles.spaceW}></View>
                         <View style={styles.sqr}>{pic2 && (<Image
-                            style={{width: 150, height: 200,alignSelf:'center'}}
+                            style={{width: 160, height: 200,alignSelf:'center'}}
                             source={{uri: pic2}}
                             />)}
                         </View>
@@ -352,25 +389,46 @@ async function getData(){
 const styles = StyleSheet.create({
     container:{
         flex:1,
+        backgroundColor:'#ffffff',
     },
     title:{
         alignSelf:'center',
         fontSize:24,
-        borderBottomWidth:1
+        borderBottomWidth:0.5
+    },
+    inputStyle:{
+        marginTop:3,
+        marginBottom:3,
+        marginLeft:10,
+        marginRight:10,
+        padding:3,
+        borderRadius:6,
+        elevation:3,
+        backgroundColor:'#fafafa',
+        shadowOffset:{width:1,height:1},
+        shadowColor:'#000',
+        shadowOpacity:0.3,
+        shadowRadius:1,
+        marginHorizontal:3,
+        marginVertical:4,
+        alignSelf:'stretch',
+        alignItems:'center',
     },
     sqr:{
         flex:1,
-        height:230,
-        backgroundColor:'#aecfe7',
+        height:220,
+        backgroundColor:'#fafafa',
         alignSelf:'stretch',
         justifyContent:'center',
+        borderWidth:0.5,
     },
     sqr2:{
         flex:1,
         height:280,
-        backgroundColor:'#aecfe7',
+        backgroundColor:'#fafafa',
         alignSelf:'stretch',
         justifyContent:'center',
+        borderWidth:0.2,
     },
     colum:{
         flex:1,

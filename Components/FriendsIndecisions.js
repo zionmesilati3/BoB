@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from 'react';
-import { View, Text,StyleSheet,AsyncStorage,ScrollView,Button } from 'react-native';
+import { View, Text,StyleSheet,AsyncStorage,ScrollView,Button, ActivityIndicator,Image } from 'react-native';
 import { ActionButton,Card } from 'react-native-material-ui';
 import { CheckBox } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -67,16 +67,31 @@ async function getData(){
             <Text style={styles.title}>Friends Decisions</Text>
             <View style={styles.spaceH}></View>
             <ScrollView>
-            <View style={styles.container}>
-                        {friendsDec&&friendsDec.map((item)=><View style={styles.sqr} key={item.IndecisionID}><View style={styles.spaceH}></View>
-                            <Text style={styles.title1}> {item.Description_}</Text>
-                            <View style={styles.spaceH}></View>
-                            <View style={styles.row}>
-                                <Button style={styles.btnL} onPress={()=>nav(item)} title='Help your Friend Decision'></Button>
+                <View style={styles.container}>
+                    <View>
+                            {friendsDec&&friendsDec.map((item)=>
+                            <View style={styles.sqr} key={item.IndecisionID}><View style={styles.spaceH}></View>
+                                <Text style={styles.title1}> {item.Description_}</Text>
+                                <View style={styles.spaceH}></View>
+                                <View style={styles.row}>
+                                <Image
+                            style={styles.picture}
+                            source={{uri: item.Img1}}
+                            />
+                            <View style={styles.spaceW}></View>
+                            <Image
+                            style={styles.picture}
+                            source={{uri: item.Img2}}
+                            />
                             </View>
-                            <View style={styles.spaceH}></View>
-                        </View>)}
-            </View>
+                                <View style={styles.spaceH}></View>
+                                <View style={styles.row}>
+                                    <Button style={styles.btnL} onPress={()=>nav(item)} title='Help your Friend'></Button>
+                                </View>
+                                <View style={styles.spaceH}></View>
+                            </View>)}{!friendsDec&&<ActivityIndicator animating={true} color='#bc2b78' size='large' />}
+                    </View>
+                </View>
             </ScrollView>
         </View>
     )
@@ -85,18 +100,26 @@ async function getData(){
 const styles = StyleSheet.create({
     container:{
         flex:1,
+        backgroundColor:'#ffffff'
     },
     sqr:{
-            borderRadius:6,
-            elevation:3,
-            backgroundColor:'#aecfe7',
-            shadowOffset:{width:1,height:1},
-            shadowColor:'#000',
-            shadowOpacity:0.3,
-            shadowRadius:1,
-            marginHorizontal:3,
-            marginVertical:4,
-    },
+        marginTop:10,
+        marginBottom:10,
+        marginLeft:20,
+        marginRight:20,
+        padding:10,
+        borderRadius:6,
+        elevation:3,
+        backgroundColor:'#fcfcfc',
+        shadowOffset:{width:1,height:1},
+        shadowColor:'#000',
+        shadowOpacity:0.3,
+        shadowRadius:1,
+        marginHorizontal:3,
+        marginVertical:4,
+        alignSelf:'stretch',
+        alignItems:'center',
+},
     title:{
         fontSize:24,
         alignSelf:'center',
@@ -124,5 +147,11 @@ const styles = StyleSheet.create({
     },
     btnR:{
         alignSelf:'flex-end',
+    },
+    picture:{
+        width:80,
+        height:100,
+        alignSelf:'center',
+        padding:60,
     },
 })

@@ -1,19 +1,17 @@
 import React,{useState, useEffect} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createStackNavigator } from '@react-navigation/stack';
 import HomeStack from './Components/HomeStack.js';
-import MakeDecision from './Components/MakeDecision.js';
 import Header from './Components/Header.js';
-import CreateGroup from './Components/CreateGroup.js';
-import GroupList from './Components/GroupList.js';
-import MyDecisionsStack from './Components/MyDecisionsStack.js';
-import FDecisionsStack from './Components/FDecisionsStack.js';
 import 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Login from './Components/Login.js';
+import SignUp from './Components/SignUp.js';
+import Commercial from './Components/Commercial.js';
 
 
-const Drawer = createDrawerNavigator();
+const Stack = createStackNavigator();
 
 
 /**
@@ -49,9 +47,25 @@ const [user,setUser]=useState('');
 
   return (
     <SafeAreaProvider>
-<NavigationContainer style={{backgroundColor:'#5af'}}>
+<NavigationContainer>
   <Header user={user}/>
-      <Drawer.Navigator initialRouteName="Home">
+  <Stack.Navigator initialRouteName="Login">
+            <Stack.Screen name="Login" component={Login} options={{headerShown:false}} />
+            <Stack.Screen name="SignUp" component={SignUp} options={{headerShown:false}} />
+            <Stack.Screen name="Home" component={HomeStack} options={{headerShown:false}} />
+            <Stack.Screen name="Commercial" component={Commercial} options={{headerShown:false}} />
+        </Stack.Navigator>
+</NavigationContainer>
+</SafeAreaProvider>
+
+);
+}
+
+
+/**
+
+
+<Drawer.Navigator initialRouteName="Home">
         <Drawer.Screen name="Home" component={HomeStack} />
         <Drawer.Screen name="Friends Decisions" component={FDecisionsStack} />
         <Drawer.Screen name="My Decisions" component={MyDecisionsStack} />
@@ -59,11 +73,8 @@ const [user,setUser]=useState('');
         <Drawer.Screen name="GroupList" component={GroupList} />
         <Drawer.Screen name="Create Group" component={CreateGroup} />
       </Drawer.Navigator>
-</NavigationContainer>
-</SafeAreaProvider>
 
-);
-}
+ */
 
 const styles = StyleSheet.create({
   container: {

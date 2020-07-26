@@ -63,8 +63,8 @@ async function getData(){
         }
 
 const GR=(decID)=>{
-    GetResults(decID)
-}
+        GetResults(decID)
+    }
 
 
 async function GetResults(decID){
@@ -132,7 +132,7 @@ async function GetResults(decID){
                         </View>)}{!closed&&<ActivityIndicator animating={true} color='#bc2b78' size='large' />}
             </View>
             </ScrollView>
-                <Button onPress={()=>navigation.navigate('Make Decision')} title="Make Decision" />
+                <ActionButton style={{container:{backgroundColor:'#5af'}}} icon="add" onPress={()=>navigation.navigate('Make Decision')} />
         </View>
     )
 }

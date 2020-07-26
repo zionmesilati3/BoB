@@ -126,7 +126,7 @@ const changePhoneNumbers=()=>{
 // send the phone numbers of picked friends to DB to add to the new group
 
 const sendData=async()=>{
-    //let pn;
+    let pn;
     let phoneNumbersString = "'050555555111','050555555101','0522695041',";
     // we can use this if and map statements to send
     if(fl.length>0){
@@ -173,11 +173,11 @@ const groupCheck=async(data)=>{
         .then((res)=>{
             console.log(res);
             if(res>0){
-                alert("group name already exist in DB");
+                alert("group name is already in use");
                 console.log("group name already in use");
             }
             else if(res===0){
-                alert("group doesnt exist in DB you can use it");
+                alert("creating new group");
                 groupIN(res,phones);
             }
             else{alert("error of some kind");}
@@ -228,6 +228,36 @@ const GroupID=async(phones)=>{
 // **** 5 **** //
 // add users to group
 
+const UserToUserAdd=async(phones)=>{
+    if(phones!==null){
+        phones.map((friend)=>{
+
+            let UserToUser = {
+                "UserSend": user.Email,
+                "UserReceive": friend.Email,
+                "NumOfCurrectAnswer": 1,
+            }
+            console.log("here is what i need ",UserToUser)
+
+            fetch('https://proj.ruppin.ac.il/igroup21/proj/api/UserToUser/',{
+                method:'POST',
+                headers:{
+                    Accept:'application/json','Content-Type':'application/json',
+                },
+                body:JSON.stringify(UserToUser)
+            })
+            .then((response)=>console.log("friend was added to UserToUser table"))
+            .catch((error)=>console.log(error))
+        })
+        endFunc();
+    }
+}
+
+const endFunc=()=>{
+    navigation.navigate('Home');
+}
+
+
 const UsersAdder=async(groupID,phones)=>{
     console.log(phones)
     if(phones!==null){
@@ -236,7 +266,7 @@ const UsersAdder=async(groupID,phones)=>{
                 "User_email": friend.Email,
                 "Group_groupID": groupID
             }
-            
+
             fetch('https://proj.ruppin.ac.il/igroup21/proj/api/UserInGroup',{
                 method:'POST',
                 headers:{
@@ -247,7 +277,7 @@ const UsersAdder=async(groupID,phones)=>{
             .then((response)=>console.log("added friend to group"))
             .catch((error)=>console.log(error))
         });
-
+        UserToUserAdd(phones);
     }
 }
 
@@ -265,7 +295,7 @@ const UsersAdder=async(groupID,phones)=>{
 <ContactList placeContact={CheckFriend} />
 
 
-                <ActionButton style={{container:{backgroundColor:'#3838c7'}}} icon="add" onPress={()=>sendData()} />
+                <ActionButton style={{container:{backgroundColor:'#5af'}}} icon="add" onPress={()=>sendData()} />
 
         </View>
     )

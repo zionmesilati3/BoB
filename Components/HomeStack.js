@@ -1,24 +1,27 @@
 import React,{useState, useEffect} from 'react';
-import { View, Text,StyleSheet,AsyncStorage,ScrollView,Button,Image,TouchableOpacity } from 'react-native';
-import { Icon } from 'react-native-material-ui';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import Home from './MyHome.js';
-import Login from './Login.js';
-import SignUp from './SignUp.js';
-import Commercial from './Commercial.js';
+import CreateGroup from './CreateGroup.js';
+import GroupList from './GroupList.js';
+import MyDecisionsStack from './MyDecisionsStack.js';
+import FDecisionsStack from './FDecisionsStack.js';
+import MakeDecision from './MakeDecision.js';
 
-const Stack = createStackNavigator();
+
+
+const Drawer = createDrawerNavigator();
 
 export default function HomeStack({navigation}){
     // just a basic navigator to make some screen not apper
     // i still need to fix something here to make the login screen not part of the drawer at all
     return (
-        <Stack.Navigator initialRouteName="Login">
-            <Stack.Screen name="Login" component={Login} options={{headerShown:false}} />
-            <Stack.Screen name="SignUp" component={SignUp} options={{headerShown:false}} />
-            <Stack.Screen name="Home" component={Home} options={{headerShown:false}} />
-            <Stack.Screen name="Commercial" component={Commercial} options={{headerShown:false}} />
-        </Stack.Navigator>
+    <Drawer.Navigator initialRouteName="Home">
+        <Drawer.Screen name="Home" component={Home} />
+        <Drawer.Screen name="Friends Decisions" component={FDecisionsStack} />
+        <Drawer.Screen name="My Decisions" component={MyDecisionsStack} />
+        <Drawer.Screen name="Make Decision" component={MakeDecision} />
+        <Drawer.Screen name="GroupList" component={GroupList} />
+        <Drawer.Screen name="Create Group" component={CreateGroup} />
+    </Drawer.Navigator>
     )
 }

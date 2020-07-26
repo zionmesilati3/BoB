@@ -363,7 +363,7 @@ async function getData(){
                         
                         <View style={styles.spaceW}></View>
                     </View>
-                    <ActionButton style={{container:{backgroundColor:'#5bf'}}} icon="add" onPress={()=>MakeDecision()} />
+                    <ActionButton style={{container:{backgroundColor:'#5af'}}} icon="add" onPress={()=>MakeDecision()} />
                 </View>
 
             </View>

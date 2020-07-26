@@ -8,14 +8,14 @@ export default function Decisions({route,navigation}){
     const [decision,setDecision]=useState(route.params.Decision)
     const [picture1,setPicture1]=useState(route.params.Decision.Img1)
     const [picture2,setPicture2]=useState(route.params.Decision.Img2)
-    const [value,setValue]=useState('');
+    const [value,setValue]=useState(null);
     const [winner,setWinner]=useState('');
     useEffect(()=>{
         if(route.params.Decision.CurrectAnswerPercent>0.5){
             setWinner("Image 2");
             setValue(route.params.Decision.CurrectAnswerPercent*100)
         }
-        else if(route.params.Decision.CurrectAnswerPercent<0.5){
+        else if(route.params.Decision.CurrectAnswerPercent<0.5 && route.params.Decision.CurrectAnswerPercent>0){
             setWinner("Image 1");
             setValue((1-route.params.Decision.CurrectAnswerPercent)*100)
         }
@@ -57,7 +57,8 @@ export default function Decisions({route,navigation}){
                 </View>
 
                 <View style={styles.sqr1}>
-                    <Text style={styles.title1}>{winner} is leading by {value}% </Text>
+                    {value && (<Text style={styles.title1}>{winner} is leading by {value}% </Text>)}
+                    {!value && <Text style={styles.title1}>{winner}</Text>}
                     {winner==="Image 1"&&<Image
                             style={styles.picture1}
                             source={{uri: picture1}}

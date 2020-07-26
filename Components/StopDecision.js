@@ -8,15 +8,15 @@ export default function Decisions({route,navigation}){
     const [decision,setDecision]=useState(route.params.Decision)
     const [picture1,setPicture1]=useState(route.params.Decision.Img1)
     const [picture2,setPicture2]=useState(route.params.Decision.Img2)
-    const [winner,setWinner]=useState('no data')
-    const [value,setValue]=useState('')
+    const [winner,setWinner]=useState('')
+    const [value,setValue]=useState(null)
 
     useEffect(()=>{
         if(route.params.Decision.CurrectAnswerPercent>0.5){
             setWinner("Image 2");
             setValue(route.params.Decision.CurrectAnswerPercent*100)
         }
-        else if(route.params.Decision.CurrectAnswerPercent<0.5){
+        else if(route.params.Decision.CurrectAnswerPercent<0.5&&route.params.Decision.CurrectAnswerPercent>0){
             setWinner("Image 1");
             setValue((1-route.params.Decision.CurrectAnswerPercent)*100)
         }
@@ -138,7 +138,8 @@ async function CloseDecision(){
                 <View style={styles.colum}>
                 <View style={styles.spaceH}></View>
                 <View>
-                    <Text style={styles.title1}>your friends choose {winner} and its leading by {value}% </Text>
+                    {value && (<Text style={styles.title}>your friends choose {winner} and its leading by {value}% </Text>)}
+                    {!value && (<Text style={styles.title}>{winner}</Text>)}
                 </View>
                 
                     <View style={styles.row1}>

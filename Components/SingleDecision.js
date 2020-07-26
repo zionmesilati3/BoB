@@ -138,13 +138,13 @@ const ChosenAnswer=(value)=>{
                         <Slider
                             minimumValue={0}
                             maximumValue={100}
-                            minimumTrackTintColor="#1EB1FC"
-                            maximumTractTintColor="#1EB1FC"
+                            minimumTrackTintColor="#5af"
+                            maximumTractTintColor="#5af"
                             step={1}
                             value={answer}
                             onValueChange={value => ChosenAnswer(value)}
                             style={styles.slider}
-                            thumbTintColor="#1EB1FC"
+                            thumbTintColor="5af"
                         />
 
                         
@@ -166,7 +166,7 @@ const ChosenAnswer=(value)=>{
                 
 <View style={styles.btn}>
         <TouchableOpacity onPress={()=>SendAnswer()}>
-            <Icon color='#a0a0ff' size={100} style={{alignSelf:'center'}} name="send" />
+            <Icon color='#5af' size={100} style={{alignSelf:'center'}} name="send" />
         </TouchableOpacity>
 </View>
                 
